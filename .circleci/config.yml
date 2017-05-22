@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: true
+          command: pip install --upgrade numpy
       - run:
           name: Unit tests in Python 3.5
           command: tox -e py35
