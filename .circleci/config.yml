@@ -22,10 +22,6 @@ jobs:
           command: |
             python3.6 -V
             python2.7 -V
-            python3.5 -V
-      - run:
-          name: Unit tests in Python 3.5
-          command: venv/bin/tox -e py35
       - run:
           name: Unit tests in Python 3.6
           command: venv/bin/tox -e py36
