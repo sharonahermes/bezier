@@ -2,7 +2,7 @@
 version: 2
 jobs:
   build:
-    working_directory: /var/code/bezier/
+    working_directory: ${HOME}/bezier/
     docker:
       - image: circleci/python:3.6
         environment:
