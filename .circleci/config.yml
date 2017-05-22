@@ -13,28 +13,31 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip install --upgrade numpy
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade tox
       - run:
           name: Unit tests in Python 3.5
-          command: tox -e py35
+          command: venv/bin/tox -e py35
       - run:
           name: Unit tests in Python 3.6
-          command: tox -e py36
+          command: venv/bin/tox -e py36
       - run:
           name: Unit tests AND line coverage in Python 2.7
-          command: tox -e cover
+          command: venv/bin/tox -e cover
       - run:
           name: Build docs
-          command: tox -e docs
+          command: venv/bin/tox -e docs
       - run:
           name: Run all doctests
-          command: tox -e doctest
+          command: venv/bin/tox -e doctest
       - run:
           name: Lint code for style issues
-          command: tox -e lint
+          command: venv/bin/tox -e lint
       - run:
           name: Functional tests in
-          command: tox -e functional
+          command: venv/bin/tox -e functional
       - deploy:
           name: Upload coverage to coveralls
           command: |
