@@ -5,10 +5,10 @@ jobs:
     working_directory: ~/bezier/
     docker:
       - image: circleci/python:3.6
-        environment:
-          MATPLOTLIBRC: tests
       - image: circleci/python:2.7
       - image: circleci/python:3.5
+    environment:
+      MATPLOTLIBRC: tests
     steps:
       - checkout
       - run:
@@ -17,6 +17,12 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade tox numpy
+      - run:
+          name: Huh
+          command: |
+            python3.6 -V
+            python2.7 -V
+            python3.5 -V
       - run:
           name: Unit tests in Python 3.5
           command: venv/bin/tox -e py35
