@@ -1,0 +1,55 @@
+---
+version: 2
+jobs:
+  build:
+    working_directory: /var/code/bezier/
+    docker:
+      - image: circleci/python:3.6
+        environment:
+          MATPLOTLIBRC: tests
+      - image: circleci/python:2.7
+      - image: circleci/python:3.5
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: true
+      - run:
+          name: Unit tests in Python 3.5
+          command: tox -e py35
+      - run:
+          name: Unit tests in Python 3.6
+          command: tox -e py36
+      - run:
+          name: Unit tests AND line coverage in Python 2.7
+          command: tox -e cover
+      - run:
+          name: Build docs
+          command: tox -e docs
+      - run:
+          name: Run all doctests
+          command: tox -e doctest
+      - run:
+          name: Lint code for style issues
+          command: tox -e lint
+      - run:
+          name: Functional tests in
+          command: tox -e functional
+      - deploy:
+          name: Upload coverage to coveralls
+          command: |
+            .tox/cover/bin/pip install coveralls
+            .tox/cover/bin/coveralls
+
+deployment:
+  tag_build_for_cci2:
+    # 1.0 style config for tag builds workaround
+    # For context, see:
+    # - https://discuss.circleci.com/t/build-on-tag/9864/30
+    # - https://discuss.circleci.com/t/git-tag-deploys-in-2-0/9493/8
+    # - https://circleci.com/gh/keybits/circulate/58#config/containers/0
+    tag: /.*/
+    commands:
+      - python setup.py sdist bdist_wheel
+      - pip install --upgrade twine
+      - twine upload dist/*

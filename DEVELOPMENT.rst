@@ -16,7 +16,7 @@ In order to add a feature to ``bezier``:
    feature may catch maintainers off guard)
 
 #. **Add tests**: The feature must work fully on the following
-   CPython versions: 2.7, 3.4 and 3.5 on both UNIX and Windows.
+   CPython versions: 2.7, 3.5 and 3.6 on both UNIX and Windows.
    In addition, the feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -34,8 +34,8 @@ We recommend using ``tox`` to run unit tests:
 .. code-block:: console
 
    $ tox -e py27
-   $ tox -e py34
    $ tox -e py35
+   $ tox -e py36
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies):
@@ -45,8 +45,8 @@ manage dependencies):
 .. code-block:: console
 
    $ python2.7 -m py.test tests/
-   $ python3.4 -m py.test tests/
    $ python3.5 -m py.test tests/
+   $ python3.6 -m py.test tests/
 
 Test Coverage
 =============
@@ -244,7 +244,7 @@ To regenerate the images:
    >   docs \
    >   docs/build/doctest
 
-The images in the `Curve-Curve Intersection`_ document and and this
+The images in the `Curve-Curve Intersection`_ document and this
 document are generated as part of the functional tests:
 
 .. code-block:: console
@@ -284,12 +284,12 @@ Supported Python Versions
 ``bezier`` explicitly supports:
 
 -  `Python 2.7`_
--  `Python 3.4`_
 -  `Python 3.5`_
+-  `Python 3.6`_
 
 .. _Python 2.7: https://docs.python.org/2.7/
-.. _Python 3.4: https://docs.python.org/3.4/
 .. _Python 3.5: https://docs.python.org/3.5/
+.. _Python 3.6: https://docs.python.org/3.6/
 
 Supported versions can be found in the ``tox.ini`` `config`_.
 
