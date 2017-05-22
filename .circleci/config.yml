@@ -16,7 +16,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install --upgrade tox
+            pip install --upgrade tox numpy
       - run:
           name: Unit tests in Python 3.5
           command: venv/bin/tox -e py35
