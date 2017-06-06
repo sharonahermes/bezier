@@ -19,7 +19,7 @@ from tests import utils
 
 # pylint: disable=invalid-name,no-member
 slow = pytest.mark.skipif(
-    pytest.config.getoption('--ignore-slow') and utils.WITHOUT_SPEEDUPS,
+    pytest.config.getoption('--ignore-slow'),
     reason='--ignore-slow ignores the slow tests',
 )
 # pylint: enable=invalid-name,no-member

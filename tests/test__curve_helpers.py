@@ -86,18 +86,6 @@ class Test__evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_curve_barycentric(
-        Test__evaluate_multi_barycentric):
-
-    @staticmethod
-    def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_curve_barycentric(
-            nodes, lambda1, lambda2)
-
-
 class Test__evaluate_multi(utils.NumPyTestCase):
 
     @staticmethod
@@ -141,16 +129,6 @@ class Test__evaluate_multi(utils.NumPyTestCase):
         expected[:, 1] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
 
         self.assertEqual(result, expected)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_multi(Test__evaluate_multi):
-
-    @staticmethod
-    def _call_function_under_test(nodes, s_vals):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_multi(nodes, s_vals)
 
 
 class Test__vec_size(unittest.TestCase):
@@ -359,18 +337,6 @@ class Test__specialize_curve(utils.NumPyTestCase):
         self.assertEqual(true_end, 0.75)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_specialize_curve(Test__specialize_curve):
-
-    @staticmethod
-    def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end, degree):
-        from bezier import _speedup
-
-        return _speedup.speedup.specialize_curve(
-            nodes, start, end, curve_start, curve_end, degree)
-
-
 class Test__evaluate_hodograph(utils.NumPyTestCase):
 
     @staticmethod
@@ -429,16 +395,6 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
             self.assertEqual(first_deriv[0, 0], x_prime)
             y_prime = 3.0 * (5.0 * s_val * s_val - 6.0 * s_val + 2.0) / 2.0
             self.assertEqual(first_deriv[0, 1], y_prime)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
-
-    @staticmethod
-    def _call_function_under_test(s, nodes, degree):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_hodograph(s, nodes, degree)
 
 
 class Test_get_curvature(unittest.TestCase):

@@ -130,16 +130,6 @@ class Test__bbox_intersect(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_bbox_intersect(Test__bbox_intersect):
-
-    @staticmethod
-    def _call_function_under_test(nodes1, nodes2):
-        from bezier import _speedup
-
-        return _speedup.speedup.bbox_intersect(nodes1, nodes2)
-
-
 class Test__linearization_error(unittest.TestCase):
 
     @staticmethod
@@ -291,16 +281,6 @@ class Test__linearization_error(unittest.TestCase):
         error_val = self._call_function_under_test(nodes)
         expected = 0.125 * 5 * 4 * 13.0
         self.assertEqual(error_val, expected)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_linearization_error(Test__linearization_error):
-
-    @staticmethod
-    def _call_function_under_test(nodes):
-        from bezier import _speedup
-
-        return _speedup.speedup.linearization_error(nodes)
 
 
 class Test__newton_refine(utils.NumPyTestCase):
@@ -473,19 +453,7 @@ class Test__newton_refine(utils.NumPyTestCase):
                          curve2.evaluate(exact_t))
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_newton_refine_intersect(Test__newton_refine):
-
-    @staticmethod
-    def _call_function_under_test(s, nodes1, t, nodes2):
-        from bezier import _speedup
-
-        return _speedup.speedup.newton_refine_intersect(s, nodes1, t, nodes2)
-
-
 class Test__segment_intersection(unittest.TestCase):
-
-    WITH_NONES = True
 
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
@@ -528,23 +496,9 @@ class Test__segment_intersection(unittest.TestCase):
             intersection, s_val,
             direction0, t_val, direction1)
 
-        if self.WITH_NONES:
-            self.assertIsNone(computed_s)
-            self.assertIsNone(computed_t)
+        self.assertIsNone(computed_s)
+        self.assertIsNone(computed_t)
         self.assertFalse(success)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_segment_intersection(Test__segment_intersection):
-
-    WITH_NONES = False
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _speedup
-
-        return _speedup.speedup.segment_intersection(
-            start0, end0, start1, end1)
 
 
 class Test__parallel_different(unittest.TestCase):
@@ -595,17 +549,6 @@ class Test__parallel_different(unittest.TestCase):
         end1 = np.asfortranarray([[0.0, 2.0]])
         self.assertTrue(
             self._call_function_under_test(start0, end0, start1, end1))
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_parallel_different(Test__parallel_different):
-
-    @staticmethod
-    def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _speedup
-
-        return _speedup.speedup.parallel_different(
-            start0, end0, start1, end1)
 
 
 class Test__wiggle_pair(unittest.TestCase):
@@ -827,22 +770,6 @@ class Test__from_linearized_low_level_py(utils.NumPyTestCase):
             self._call_function_under_test(
                 error1, 0.0, 1.0, start_node1, end_node1, nodes1,
                 error2, 0.0, 1.0, start_node2, end_node2, nodes2)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_from_linearized(Test__from_linearized_low_level_py):
-
-    # pylint: disable=too-many-arguments
-    @staticmethod
-    def _call_function_under_test(
-            error1, start1, end1, start_node1, end_node1, nodes1,
-            error2, start2, end2, start_node2, end_node2, nodes2):
-        from bezier import _speedup
-
-        return _speedup.speedup.from_linearized(
-            error1, start1, end1, start_node1, end_node1, nodes1,
-            error2, start2, end2, start_node2, end_node2, nodes2)
-    # pylint: enable=too-many-arguments
 
 
 class Test_from_linearized(utils.NumPyTestCase):

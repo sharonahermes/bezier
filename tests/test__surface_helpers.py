@@ -288,17 +288,6 @@ class Test__de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _speedup
-
-        return _speedup.speedup.de_casteljau_one_round(
-            nodes, degree, lambda1, lambda2, lambda3)
-
-
 class Test__make_transform(utils.NumPyTestCase):
 
     @staticmethod
@@ -685,16 +674,6 @@ class Test__jacobian_both(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_jacobian_both(Test__jacobian_both):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _speedup
-
-        return _speedup.speedup.jacobian_both(nodes, degree, dimension)
-
-
 class Test__jacobian_det(utils.NumPyTestCase):
 
     @staticmethod
@@ -744,16 +723,6 @@ class Test__jacobian_det(utils.NumPyTestCase):
         # det(DB) = s + t + 1
         expected = np.asfortranarray([1.25, 1.875, 2.0, 2.0])
         self.assertEqual(result, expected)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_jacobian_det(Test__jacobian_det):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, st_vals):
-        from bezier import _speedup
-
-        return _speedup.speedup.jacobian_det(nodes, degree, st_vals)
 
 
 class Test_newton_refine(unittest.TestCase):
@@ -2185,17 +2154,6 @@ class Test__evaluate_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_barycentric(
-            nodes, degree, lambda1, lambda2, lambda3)
-
-
 class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
 
     @staticmethod
@@ -2244,18 +2202,6 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_barycentric_multi(
-        Test__evaluate_barycentric_multi):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_barycentric_multi(
-            nodes, degree, param_vals, dimension)
 
 
 class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
@@ -2311,14 +2257,3 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
         ])
         result = self._call_function_under_test(nodes, 1, param_vals, 2)
         self.assertEqual(result, expected)
-
-
-@unittest.skipIf(utils.WITHOUT_SPEEDUPS, 'No speedups available')
-class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
-
-    @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _speedup
-
-        return _speedup.speedup.evaluate_cartesian_multi(
-            nodes, degree, param_vals, dimension)

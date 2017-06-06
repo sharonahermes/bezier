@@ -12,12 +12,7 @@
 
 """Setup file for bezier."""
 
-from __future__ import print_function
-
 import os
-import pkg_resources
-import platform
-import sys
 
 import setuptools
 
@@ -28,28 +23,6 @@ PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(PACKAGE_ROOT, 'README.rst.template')) as file_obj:
     TEMPLATE = file_obj.read()
 
-NUMPY_MESSAGE = """\
-Error: NumPy needs to be installed first. It can be installed via:
-
-$ pip              install numpy
-$ python    -m pip install numpy --user
-$ python2.7 -m pip install numpy --user
-$ python3.6 -m pip install numpy --user
-$ # OR
-$ conda install numpy
-"""
-MISSING_F90_MESSAGE = """\
-No Fortran 90 compiler found.
-
-Skipping Fortran extension speedups.
-"""
-WINDOWS_MESSAGE = """\
-Skipping Fortran extension speedups on Windows.
-
-Sorry for this inconvenience. For more information or to help, visit:
-
-    https://github.com/dhermes/bezier/issues/26
-"""
 README = TEMPLATE.format(
     pypi='',
     pypi_img='',
@@ -71,58 +44,8 @@ DESCRIPTION = (
     u'Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects')
 
 
-def is_installed(requirement):
-    try:
-        pkg_resources.require(requirement)
-    except pkg_resources.ResolutionError:
-        return False
-    else:
-        return True
-
-
-def has_f90_compiler():
-    from distutils.ccompiler import new_compiler
-    from numpy.distutils.fcompiler import new_fcompiler
-
-    c_compiler = new_compiler()
-    f90_compiler = new_fcompiler(requiref90=True, c_compiler=c_compiler)
-    return f90_compiler is not None
-
-
-def _extension_modules():
-    # NOTE: This assumes is_installed('numpy') has already passed.
-    #       H/T to https://stackoverflow.com/a/41575848/1068170
-    from numpy.distutils import core
-
-    bezier_path = os.path.join(PACKAGE_ROOT, 'src', 'bezier')
-    extension = core.Extension(
-        name='bezier._speedup',
-        sources=[
-            os.path.join(bezier_path, '_speedup.pyf'),
-            os.path.join(bezier_path, 'speedup.f90'),
-        ],
-        language='f90',
-    )
-    if 'config_fc' not in sys.argv:
-        sys.argv.extend(['config_fc', '--opt=-O3'])
-    return [extension]
-
-
-def extension_modules():
-    if platform.system().lower() == 'windows':
-        print(WINDOWS_MESSAGE, file=sys.stderr)
-        return []
-    elif has_f90_compiler():
-        return _extension_modules()
-    else:
-        print(MISSING_F90_MESSAGE, file=sys.stderr)
-        return []
-
-
 def setup():
-    from numpy.distutils import core
-
-    core.setup(
+    setuptools.setup(
         name='bezier',
         version=VERSION,
         description=DESCRIPTION,
@@ -139,7 +62,7 @@ def setup():
         zip_safe=True,
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
-        ext_modules=extension_modules(),
+        ext_modules=[],
         classifiers=(
             'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',
@@ -156,13 +79,5 @@ def setup():
     )
 
 
-def main():
-    if not is_installed('numpy>=1.9.0'):
-        print(NUMPY_MESSAGE, file=sys.stderr)
-        sys.exit(1)
-
-    setup()
-
-
 if __name__ == '__main__':
-    main()
+    setup()

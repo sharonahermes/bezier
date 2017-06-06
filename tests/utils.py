@@ -12,14 +12,6 @@
 
 import unittest
 
-try:
-    # pylint: disable=unused-import
-    import bezier._speedup  # noqa: F401
-    # pylint: enable=unused-import
-    WITHOUT_SPEEDUPS = False
-except ImportError:  # pragma: NO COVER
-    WITHOUT_SPEEDUPS = True
-
 
 WRONG_FLAGS_TEMPLATE = """\
 Arrays are not Fortran contiguous

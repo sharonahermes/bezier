@@ -25,10 +25,6 @@ import six
 
 from bezier import _curve_helpers
 from bezier import _helpers
-try:
-    from bezier import _speedup
-except ImportError:  # pragma: NO COVER
-    _speedup = None
 
 
 # Set the threshold for exponent at half the bits available,
@@ -1672,18 +1668,10 @@ class Intersection(object):  # pylint: disable=too-few-public-methods
 
 
 # pylint: disable=invalid-name
-if _speedup is None:  # pragma: NO COVER
-    linearization_error = _linearization_error
-    segment_intersection = _segment_intersection
-    newton_refine = _newton_refine
-    bbox_intersect = _bbox_intersect
-    parallel_different = _parallel_different
-    _from_linearized_low_level = _from_linearized_low_level_py
-else:
-    linearization_error = _speedup.speedup.linearization_error
-    segment_intersection = _speedup.speedup.segment_intersection
-    newton_refine = _speedup.speedup.newton_refine_intersect
-    bbox_intersect = _speedup.speedup.bbox_intersect
-    parallel_different = _speedup.speedup.parallel_different
-    _from_linearized_low_level = _speedup.speedup.from_linearized
+linearization_error = _linearization_error
+segment_intersection = _segment_intersection
+newton_refine = _newton_refine
+bbox_intersect = _bbox_intersect
+parallel_different = _parallel_different
+_from_linearized_low_level = _from_linearized_low_level_py
 # pylint: enable=invalid-name
