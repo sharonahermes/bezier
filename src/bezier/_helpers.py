@@ -17,6 +17,7 @@ import numpy as np
 
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 
@@ -279,7 +280,7 @@ if _speedup is None:  # pragma: NO COVER
     wiggle_interval = _wiggle_interval_py
     cross_product = _cross_product
 else:
-    bbox = _speedup.bbox
-    wiggle_interval = _speedup.wiggle_interval
-    cross_product = _speedup.cross_product
+    bbox = _speedup.speedup.bbox
+    wiggle_interval = _speedup.speedup.wiggle_interval
+    cross_product = _speedup.speedup.cross_product
 # pylint: enable=invalid-name

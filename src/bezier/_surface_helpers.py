@@ -32,6 +32,7 @@ from bezier import _intersection_helpers
 from bezier import curved_polygon
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 
@@ -2450,10 +2451,10 @@ if _speedup is None:  # pragma: NO COVER
     jacobian_both = _jacobian_both
     jacobian_det = _jacobian_det
 else:
-    de_casteljau_one_round = _speedup.de_casteljau_one_round
-    evaluate_barycentric = _speedup.evaluate_barycentric
-    evaluate_barycentric_multi = _speedup.evaluate_barycentric_multi
-    evaluate_cartesian_multi = _speedup.evaluate_cartesian_multi
-    jacobian_both = _speedup.jacobian_both
-    jacobian_det = _speedup.jacobian_det
+    de_casteljau_one_round = _speedup.speedup.de_casteljau_one_round
+    evaluate_barycentric = _speedup.speedup.evaluate_barycentric
+    evaluate_barycentric_multi = _speedup.speedup.evaluate_barycentric_multi
+    evaluate_cartesian_multi = _speedup.speedup.evaluate_cartesian_multi
+    jacobian_both = _speedup.speedup.jacobian_both
+    jacobian_det = _speedup.speedup.jacobian_det
 # pylint: enable=invalid-name

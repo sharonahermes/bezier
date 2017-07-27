@@ -94,7 +94,7 @@ class Test_speedup_evaluate_curve_barycentric(
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _speedup
 
-        return _speedup.evaluate_curve_barycentric(nodes, lambda1, lambda2)
+        return _speedup.speedup.evaluate_curve_barycentric(nodes, lambda1, lambda2)
 
 
 class Test__evaluate_multi(utils.NumPyTestCase):
@@ -149,7 +149,7 @@ class Test_speedup_evaluate_multi(Test__evaluate_multi):
     def _call_function_under_test(nodes, s_vals):
         from bezier import _speedup
 
-        return _speedup.evaluate_multi(nodes, s_vals)
+        return _speedup.speedup.evaluate_multi(nodes, s_vals)
 
 
 class Test__vec_size(unittest.TestCase):
@@ -366,7 +366,7 @@ class Test_speedup_specialize_curve(Test__specialize_curve):
             nodes, start, end, curve_start, curve_end):
         from bezier import _speedup
 
-        return _speedup.specialize_curve(
+        return _speedup.speedup.specialize_curve(
             nodes, start, end, curve_start, curve_end)
 
 
@@ -434,7 +434,7 @@ class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
     def _call_function_under_test(s, nodes):
         from bezier import _speedup
 
-        return _speedup.evaluate_hodograph(s, nodes)
+        return _speedup.speedup.evaluate_hodograph(s, nodes)
 
 
 class Test_get_curvature(unittest.TestCase):

@@ -30,6 +30,7 @@ except ImportError:  # pragma: NO COVER
 from bezier import _helpers
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 
@@ -849,8 +850,8 @@ if _speedup is None:  # pragma: NO COVER
     specialize_curve = _specialize_curve
     evaluate_hodograph = _evaluate_hodograph
 else:
-    evaluate_multi_barycentric = _speedup.evaluate_curve_barycentric
-    evaluate_multi = _speedup.evaluate_multi
-    specialize_curve = _speedup.specialize_curve
-    evaluate_hodograph = _speedup.evaluate_hodograph
+    evaluate_multi_barycentric = _speedup.speedup.evaluate_curve_barycentric
+    evaluate_multi = _speedup.speedup.evaluate_multi
+    specialize_curve = _speedup.speedup.specialize_curve
+    evaluate_hodograph = _speedup.speedup.evaluate_hodograph
 # pylint: enable=invalid-name

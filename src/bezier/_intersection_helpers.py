@@ -27,6 +27,7 @@ from bezier import _curve_helpers
 from bezier import _helpers
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 
@@ -1676,10 +1677,10 @@ if _speedup is None:  # pragma: NO COVER
     parallel_different = _parallel_different
     _from_linearized_low_level = _from_linearized_low_level_py
 else:
-    linearization_error = _speedup.linearization_error
-    segment_intersection = _speedup.segment_intersection
-    newton_refine = _speedup.newton_refine_intersect
-    bbox_intersect = _speedup.bbox_intersect
-    parallel_different = _speedup.parallel_different
-    _from_linearized_low_level = _speedup.from_linearized
+    linearization_error = _speedup.speedup.linearization_error
+    segment_intersection = _speedup.speedup.segment_intersection
+    newton_refine = _speedup.speedup.newton_refine_intersect
+    bbox_intersect = _speedup.speedup.bbox_intersect
+    parallel_different = _speedup.speedup.parallel_different
+    _from_linearized_low_level = _speedup.speedup.from_linearized
 # pylint: enable=invalid-name
