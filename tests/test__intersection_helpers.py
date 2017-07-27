@@ -604,7 +604,8 @@ class Test_speedup_parallel_different(Test__parallel_different):
     def _call_function_under_test(start0, end0, start1, end1):
         from bezier import _speedup
 
-        return _speedup.speedup.parallel_different(start0, end0, start1, end1)
+        return _speedup.speedup.parallel_different(
+            start0, end0, start1, end1)
 
 
 class Test__wiggle_pair(unittest.TestCase):

@@ -94,7 +94,8 @@ class Test_speedup_evaluate_curve_barycentric(
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier import _speedup
 
-        return _speedup.speedup.evaluate_curve_barycentric(nodes, lambda1, lambda2)
+        return _speedup.speedup.evaluate_curve_barycentric(
+            nodes, lambda1, lambda2)
 
 
 class Test__evaluate_multi(utils.NumPyTestCase):
@@ -273,11 +274,11 @@ class Test__specialize_curve(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end):
+            nodes, start, end, curve_start, curve_end, degree):
         from bezier import _curve_helpers
 
         return _curve_helpers._specialize_curve(
-            nodes, start, end, curve_start, curve_end)
+            nodes, start, end, curve_start, curve_end, degree)
 
     def test_linear(self):
         nodes = np.asfortranarray([
@@ -285,7 +286,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [1.0, 1.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.25, 0.75, 0.125, 0.25)
+            nodes, 0.25, 0.75, 0.125, 0.25, 1)
         expected = np.asfortranarray([
             [0.25, 0.25],
             [0.75, 0.75],
@@ -306,13 +307,13 @@ class Test__specialize_curve(utils.NumPyTestCase):
         left, right = curve.subdivide()
 
         left_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.0, 0.5, 0.0, 1.0)
+            nodes, 0.0, 0.5, 0.0, 1.0, 2)
         self.assertEqual(left.nodes, left_nodes)
         self.assertEqual(true_start, left.start)
         self.assertEqual(true_end, left.end)
 
         right_nodes, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 1.0, 0.0, 1.0)
+            nodes, 0.5, 1.0, 0.0, 1.0, 2)
         self.assertEqual(right.nodes, right_nodes)
         self.assertEqual(true_start, right.start)
         self.assertEqual(true_end, right.end)
@@ -325,7 +326,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [3.0, 2.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.125, 0.625, 0.0, 1.0)
+            nodes, 0.125, 0.625, 0.0, 1.0, 3)
         expected = np.asfortranarray([
             [171, -187],
             [375, -423],
@@ -345,7 +346,7 @@ class Test__specialize_curve(utils.NumPyTestCase):
             [3.0, 7.0],
         ])
         result, true_start, true_end = self._call_function_under_test(
-            nodes, 0.5, 0.75, 0.0, 1.0)
+            nodes, 0.5, 0.75, 0.0, 1.0, 4)
         expected = np.asfortranarray([
             [1.5625, 6.375],
             [1.78125, 6.4375],
@@ -363,36 +364,38 @@ class Test_speedup_specialize_curve(Test__specialize_curve):
 
     @staticmethod
     def _call_function_under_test(
-            nodes, start, end, curve_start, curve_end):
+            nodes, start, end, curve_start, curve_end, degree):
         from bezier import _speedup
 
         return _speedup.speedup.specialize_curve(
-            nodes, start, end, curve_start, curve_end)
+            nodes, start, end, curve_start, curve_end, degree)
 
 
 class Test__evaluate_hodograph(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(s, nodes):
+    def _call_function_under_test(s, nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers._evaluate_hodograph(s, nodes)
+        return _curve_helpers._evaluate_hodograph(s, nodes, degree)
 
     def test_line(self):
+        degree = 1
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [1.0, 1.0],
         ])
 
-        first_deriv1 = self._call_function_under_test(0.25, nodes)
+        first_deriv1 = self._call_function_under_test(0.25, nodes, degree)
         expected = np.asfortranarray(nodes[[1], :] - nodes[[0], :])
         self.assertEqual(first_deriv1, expected)
         # Make sure it is the same elsewhere since
         # the derivative curve is degree 0.
-        first_deriv2 = self._call_function_under_test(0.75, nodes)
+        first_deriv2 = self._call_function_under_test(0.75, nodes, degree)
         self.assertEqual(first_deriv1, first_deriv2)
 
     def test_quadratic(self):
+        degree = 2
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.5, 1.0],
@@ -403,12 +406,13 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
         # B'(s) = [(2 + s)/2, (4 - 7s)/2]
 
         for s_val in (0.0, 0.25, 0.5, 0.625, 0.875):
-            first_deriv = self._call_function_under_test(s_val, nodes)
+            first_deriv = self._call_function_under_test(s_val, nodes, degree)
             self.assertEqual(first_deriv.shape, (1, 2))
             self.assertEqual(first_deriv[0, 0], (2.0 + s_val) / 2.0)
             self.assertEqual(first_deriv[0, 1], (4.0 - 7.0 * s_val) / 2.0)
 
     def test_cubic(self):
+        degree = 3
         nodes = np.asfortranarray([
             [0.0, 0.0],
             [0.25, 1.0],
@@ -419,7 +423,7 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
         #  B(s) = [s(3 + 3s - s^2)/4, s(5s^2 - 9s + 6)/2]
         # B'(s) = [3(1 + 2s - s^2)/4, 3(5s^2 - 6s + 2)/2]
         for s_val in (0.125, 0.5, 0.75, 1.0, 1.125):
-            first_deriv = self._call_function_under_test(s_val, nodes)
+            first_deriv = self._call_function_under_test(s_val, nodes, degree)
             self.assertEqual(first_deriv.shape, (1, 2))
             x_prime = 3.0 * (1.0 + 2.0 * s_val - s_val * s_val) / 4.0
             self.assertEqual(first_deriv[0, 0], x_prime)
@@ -431,10 +435,10 @@ class Test__evaluate_hodograph(utils.NumPyTestCase):
 class Test_speedup_evaluate_hodograph(Test__evaluate_hodograph):
 
     @staticmethod
-    def _call_function_under_test(s, nodes):
+    def _call_function_under_test(s, nodes, degree):
         from bezier import _speedup
 
-        return _speedup.speedup.evaluate_hodograph(s, nodes)
+        return _speedup.speedup.evaluate_hodograph(s, nodes, degree)
 
 
 class Test_get_curvature(unittest.TestCase):
@@ -447,10 +451,10 @@ class Test_get_curvature(unittest.TestCase):
             nodes, degree, tangent_vec, s)
 
     @staticmethod
-    def _get_tangent_vec(s, nodes):
+    def _get_tangent_vec(s, nodes, degree):
         from bezier import _curve_helpers
 
-        return _curve_helpers.evaluate_hodograph(s, nodes)
+        return _curve_helpers.evaluate_hodograph(s, nodes, degree)
 
     def test_line(self):
         s = 0.5
@@ -458,7 +462,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.0, 0.0],
             [1.0, 1.0],
         ])
-        tangent_vec = self._get_tangent_vec(s, nodes)
+        tangent_vec = self._get_tangent_vec(s, nodes, 1)
         result = self._call_function_under_test(nodes, 1, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
@@ -469,7 +473,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.5, 0.5],
             [1.0, 1.0],
         ])
-        tangent_vec = self._get_tangent_vec(s, nodes)
+        tangent_vec = self._get_tangent_vec(s, nodes, 2)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, 0.0)
 
@@ -480,7 +484,7 @@ class Test_get_curvature(unittest.TestCase):
             [0.5, 1.0],
             [1.0, 0.0],
         ])
-        tangent_vec = self._get_tangent_vec(s, nodes)
+        tangent_vec = self._get_tangent_vec(s, nodes, 2)
         result = self._call_function_under_test(nodes, 2, tangent_vec, s)
         self.assertEqual(result, -4.0)
 

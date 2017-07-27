@@ -325,7 +325,7 @@ def de_casteljau_one_round(nodes, lambda1, lambda2):
         lambda1 * nodes[:-1, :] + lambda2 * nodes[1:, :])
 
 
-def _specialize_curve(nodes, start, end, curve_start, curve_end):
+def _specialize_curve(nodes, start, end, curve_start, curve_end, degree):
     """Specialize a curve to a re-parameterization
 
     Does so by taking two points along the number line and then
@@ -349,6 +349,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
             the curve defined by ``nodes`` defines.
         curve_end (float): The end of the original interval which the
             the curve defined by ``nodes`` defines.
+        degree (int): The degree of the curve.
 
     Returns:
         Tuple[numpy.ndarray, float, float]: The control points for the
@@ -356,9 +357,6 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
         newly created curve.
     """
     # pylint: disable=too-many-locals
-    num_nodes, _ = nodes.shape
-    degree = num_nodes - 1
-
     # Uses start-->0, end-->1 to represent the specialization used.
     weights = (
         (1.0 - start, start),
@@ -392,7 +390,7 @@ def _specialize_curve(nodes, start, end, curve_start, curve_end):
     # pylint: enable=too-many-locals
 
 
-def _evaluate_hodograph(s, nodes):
+def _evaluate_hodograph(s, nodes, degree):
     r"""Evaluate the Hodograph curve at a point :math:`s`.
 
     The Hodograph (first derivative) of a B |eacute| zier curve
@@ -413,6 +411,8 @@ def _evaluate_hodograph(s, nodes):
 
     Args:
         nodes (numpy.ndarray): The nodes of a curve.
+        degree (int): The degree of the curve (assumed to be one less than
+            the number of ``nodes``.
         s (float): A parameter along the curve at which the Hodograph
             is to be evaluated.
 
@@ -422,8 +422,6 @@ def _evaluate_hodograph(s, nodes):
     """
     first_deriv = nodes[1:, :] - nodes[:-1, :]
     # NOTE: Taking the derivative drops the degree by 1.
-    num_nodes, _ = nodes.shape
-    degree = num_nodes - 1
     return degree * evaluate_multi(
         first_deriv, np.asfortranarray([s]))
 
@@ -447,6 +445,10 @@ def get_curvature(nodes, degree, tangent_vec, s):
        from bezier._curve_helpers import evaluate_hodograph
        from bezier._curve_helpers import get_curvature
 
+       def hodograph(nodes, s):
+           degree = nodes.shape[0] - 1
+           return evaluate_hodograph(s, nodes, degree)
+
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
@@ -458,7 +460,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
        ...     [0.0 ,  0.0],
        ... ])
        >>> s = 0.5
-       >>> tangent_vec = evaluate_hodograph(s, nodes)
+       >>> tangent_vec = hodograph(nodes, s)
        >>> tangent_vec
        array([[-1., 0.]])
        >>> curvature = get_curvature(nodes, 4, tangent_vec, s)
@@ -661,9 +663,10 @@ def newton_refine(curve, point, s):
     """
     # pylint: disable=protected-access
     nodes = curve._nodes
+    degree = curve._degree
     # pylint: enable=protected-access
     pt_delta = point - curve.evaluate(s)
-    derivative = evaluate_hodograph(s, nodes)
+    derivative = evaluate_hodograph(s, nodes, degree)
     # Each array is 1x2 (i.e. a row vector), we want the vector dot product.
     delta_s = (
         np.vdot(pt_delta[0, :], derivative[0, :]) /

@@ -868,7 +868,7 @@ def _jacobian_det(nodes, degree, st_vals):
         bs_bt_vals = np.repeat(jac_nodes, num_vals, axis=0)
     else:
         bs_bt_vals = evaluate_cartesian_multi(
-            jac_nodes, degree - 1, st_vals)
+            jac_nodes, degree - 1, st_vals, 4)
 
     # Take the determinant for each (s, t).
     return (bs_bt_vals[:, 0] * bs_bt_vals[:, 3] -
@@ -1114,11 +1114,13 @@ def classify_intersection(intersection):
        from bezier._surface_helpers import classify_intersection
 
        def hodograph(curve, s):
-           return _curve_helpers.evaluate_hodograph(s, curve._nodes)
+           return _curve_helpers.evaluate_hodograph(
+               s, curve._nodes, curve._degree)
 
        def curvature(curve, s):
            nodes = curve._nodes
-           tangent = _curve_helpers.evaluate_hodograph(s, nodes)
+           tangent = _curve_helpers.evaluate_hodograph(
+               s, nodes, curve._degree)
            return _curve_helpers.get_curvature(
                nodes, curve._degree, tangent, s)
 
@@ -1482,9 +1484,10 @@ def classify_intersection(intersection):
                          's', intersection.s, 't', intersection.t)
 
     tangent1 = _curve_helpers.evaluate_hodograph(
-        intersection.s, intersection.first._nodes)
+        intersection.s, intersection.first._nodes, intersection.first._degree)
     tangent2 = _curve_helpers.evaluate_hodograph(
-        intersection.t, intersection.second._nodes)
+        intersection.t, intersection.second._nodes,
+        intersection.second._degree)
 
     if _ignored_corner(intersection, tangent1, tangent2):
         return IntersectionClassification.ignored_corner
@@ -1614,7 +1617,7 @@ def _ignored_edge_corner(edge_tangent, corner_tangent, corner_previous_edge):
 
     # Do the same for the **other** tangent at the corner.
     alt_corner_tangent = _curve_helpers.evaluate_hodograph(
-        1.0, corner_previous_edge._nodes)
+        1.0, corner_previous_edge._nodes, corner_previous_edge._degree)
     # Change the direction of the "in" tangent so that it points "out".
     alt_corner_tangent *= -1.0
     cross_prod = _helpers.cross_product(edge_tangent, alt_corner_tangent)
@@ -1645,7 +1648,8 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # pylint: disable=protected-access
     prev_edge = intersection.first._previous_edge
     # pylint: enable=protected-access
-    alt_tangent_s = _curve_helpers.evaluate_hodograph(1.0, prev_edge._nodes)
+    alt_tangent_s = _curve_helpers.evaluate_hodograph(
+        1.0, prev_edge._nodes, prev_edge._degree)
 
     # First check if ``tangent_t`` is interior to the ``s`` surface.
     cross_prod1 = _helpers.cross_product(tangent_s, tangent_t)
@@ -1665,7 +1669,8 @@ def _ignored_double_corner(intersection, tangent_s, tangent_t):
     # pylint: disable=protected-access
     prev_edge = intersection.second._previous_edge
     # pylint: enable=protected-access
-    alt_tangent_t = _curve_helpers.evaluate_hodograph(1.0, prev_edge._nodes)
+    alt_tangent_t = _curve_helpers.evaluate_hodograph(
+        1.0, prev_edge._nodes, prev_edge._degree)
     # Change the direction of the "in" tangent so that it points "out".
     alt_tangent_t *= -1.0
 
@@ -2350,7 +2355,7 @@ def _evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     return result
 
 
-def _evaluate_barycentric_multi(nodes, degree, param_vals):
+def _evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2363,13 +2368,13 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals):
         degree (int): The degree of the surface define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``Nx3`` array).
+        dimension (int): The dimension the surface lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where rows correspond to
         rows of ``param_vals`` and the columns to the dimension of the
         underlying surface.
     """
-    _, dimension = nodes.shape
     num_vals, _ = param_vals.shape
     result = np.empty((num_vals, dimension), order='F')
     for index, (lambda1, lambda2, lambda3) in enumerate(param_vals):
@@ -2378,7 +2383,7 @@ def _evaluate_barycentric_multi(nodes, degree, param_vals):
     return result
 
 
-def _evaluate_cartesian_multi(nodes, degree, param_vals):
+def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
     r"""Compute multiple points on the surface.
 
     .. note::
@@ -2391,13 +2396,13 @@ def _evaluate_cartesian_multi(nodes, degree, param_vals):
         degree (int): The degree of the surface define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``Nx2`` array).
+        dimension (int): The dimension the surface lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where rows correspond to
         rows of ``param_vals`` and the columns to the dimension of the
         underlying surface.
     """
-    _, dimension = nodes.shape
     num_vals, _ = param_vals.shape
     result = np.empty((num_vals, dimension), order='F')
     for index, (s, t) in enumerate(param_vals):

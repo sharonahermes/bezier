@@ -106,8 +106,8 @@ def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
     return point
 
 
-def evaluate_barycentric_multi(nodes, degree, param_vals):
-    num_nodes, dimension = nodes.shape
+def evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
+    num_nodes, _ = nodes.shape
     num_vals, cols = param_vals.shape
     assert cols == 3
     evaluated = np.empty((num_vals, dimension), order='F')
@@ -124,8 +124,8 @@ def evaluate_barycentric_multi(nodes, degree, param_vals):
     return evaluated
 
 
-def evaluate_cartesian_multi(nodes, degree, param_vals):
-    num_nodes, dimension = nodes.shape
+def evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
+    num_nodes, _ = nodes.shape
     num_vals, cols = param_vals.shape
     assert cols == 2
     evaluated = np.empty((num_vals, dimension), order='F')
@@ -188,9 +188,8 @@ def bbox(nodes):
     return left.value, right.value, bottom.value, top.value
 
 
-def specialize_curve(nodes, start, end, curve_start, curve_end):
+def specialize_curve(nodes, start, end, curve_start, curve_end, degree):
     num_nodes, dimension = nodes.shape
-    degree = num_nodes - 1
     new_nodes = np.empty((num_nodes, dimension), order='F')
 
     true_start = ctypes.c_double()
@@ -227,9 +226,8 @@ def jacobian_both(nodes, degree, dimension):
     return new_nodes
 
 
-def evaluate_hodograph(s, nodes):
-    num_nodes, dimension = nodes.shape
-    degree = num_nodes - 1
+def evaluate_hodograph(s, nodes, degree):
+    _, dimension = nodes.shape
     hodograph = np.empty((1, dimension), order='F')
 
     LIBSPEEDUP.evaluate_hodograph(
