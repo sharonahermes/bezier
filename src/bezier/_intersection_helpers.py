@@ -626,8 +626,8 @@ def _newton_refine(s, nodes1, t, nodes2):
     jac_mat = np.empty((2, 2), order='F')
     # In curve.evaluate() and evaluate_hodograph() the roles of
     # columns and rows are swapped.
-    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1, degree1)
-    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2, degree2)
+    jac_mat[0, :] = _curve_helpers.evaluate_hodograph(s, nodes1)
+    jac_mat[1, :] = - _curve_helpers.evaluate_hodograph(t, nodes2)
 
     # Solve the system (via the transposes, since, as above, the roles
     # of columns and rows are reversed).
@@ -1680,10 +1680,10 @@ if _speedup is None:  # pragma: NO COVER
     parallel_different = _parallel_different
     _from_linearized_low_level = _from_linearized_low_level_py
 else:
-    linearization_error = _speedup.speedup.linearization_error
-    segment_intersection = _speedup.speedup.segment_intersection
-    newton_refine = _speedup.speedup.newton_refine_intersect
-    bbox_intersect = _speedup.speedup.bbox_intersect
-    parallel_different = _speedup.speedup.parallel_different
-    _from_linearized_low_level = _speedup.speedup.from_linearized
+    linearization_error = _speedup.linearization_error
+    segment_intersection = _speedup.segment_intersection
+    newton_refine = _speedup.newton_refine_intersect
+    bbox_intersect = _speedup.bbox_intersect
+    parallel_different = _speedup.parallel_different
+    _from_linearized_low_level = _speedup.from_linearized
 # pylint: enable=invalid-name

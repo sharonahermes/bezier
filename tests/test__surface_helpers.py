@@ -176,7 +176,7 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
         # det(DB) = -2 (s^2 - 2t - 4)
         bernstein = self._call_function_under_test(nodes)
         evaluated_bernstein = _surface_helpers.evaluate_cartesian_multi(
-            bernstein, 2, st_vals, 1)
+            bernstein, 2, st_vals)
         self.assertEqual(evaluated_bernstein, as_det)
 
 
@@ -295,7 +295,7 @@ class Test_speedup_de_casteljau_one_round(Test__de_casteljau_one_round):
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
         from bezier import _speedup
 
-        return _speedup.speedup.de_casteljau_one_round(
+        return _speedup.de_casteljau_one_round(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
@@ -692,7 +692,7 @@ class Test_speedup_jacobian_both(Test__jacobian_both):
     def _call_function_under_test(nodes, degree, dimension):
         from bezier import _speedup
 
-        return _speedup.speedup.jacobian_both(nodes, degree, dimension)
+        return _speedup.jacobian_both(nodes, degree, dimension)
 
 
 class Test__jacobian_det(utils.NumPyTestCase):
@@ -753,7 +753,7 @@ class Test_speedup_jacobian_det(Test__jacobian_det):
     def _call_function_under_test(nodes, degree, st_vals):
         from bezier import _speedup
 
-        return _speedup.speedup.jacobian_det(nodes, degree, st_vals)
+        return _speedup.jacobian_det(nodes, degree, st_vals)
 
 
 class Test_newton_refine(unittest.TestCase):
@@ -951,11 +951,9 @@ class Test__classify_tangent_intersection(unittest.TestCase):
         from bezier import _curve_helpers
 
         tangent1 = _curve_helpers.evaluate_hodograph(
-            intersection.s, intersection.first._nodes,
-            intersection.first.degree)
+            intersection.s, intersection.first._nodes)
         tangent2 = _curve_helpers.evaluate_hodograph(
-            intersection.t, intersection.second._nodes,
-            intersection.second.degree)
+            intersection.t, intersection.second._nodes)
 
         return self._call_function_under_test(
             intersection, tangent1, tangent2)
@@ -2192,18 +2190,18 @@ class Test_speedup_evaluate_barycentric(Test__evaluate_barycentric):
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
         from bezier import _speedup
 
-        return _speedup.speedup.evaluate_barycentric(
+        return _speedup.evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3)
 
 
 class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
+    def _call_function_under_test(nodes, degree, param_vals):
         from bezier import _surface_helpers
 
         return _surface_helpers._evaluate_barycentric_multi(
-            nodes, degree, param_vals, dimension)
+            nodes, degree, param_vals)
 
     def test_basic(self):
         nodes = np.asfortranarray([
@@ -2222,7 +2220,7 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
             [0.0, 1.0, 0.0],
             [0.0, 0.5, 0.5],
         ])
-        result = self._call_function_under_test(nodes, 1, param_vals, 2)
+        result = self._call_function_under_test(nodes, 1, param_vals)
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
@@ -2242,7 +2240,7 @@ class Test__evaluate_barycentric_multi(utils.NumPyTestCase):
             [-1.0, -1.0, 3.0],
             [0.125, 0.75, 0.125]
         ])
-        result = self._call_function_under_test(nodes, 1, param_vals, 2)
+        result = self._call_function_under_test(nodes, 1, param_vals)
         self.assertEqual(result, expected)
 
 
@@ -2251,21 +2249,20 @@ class Test_speedup_evaluate_barycentric_multi(
         Test__evaluate_barycentric_multi):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
+    def _call_function_under_test(nodes, degree, param_vals):
         from bezier import _speedup
 
-        return _speedup.speedup.evaluate_barycentric_multi(
-            nodes, degree, param_vals, dimension)
+        return _speedup.evaluate_barycentric_multi(nodes, degree, param_vals)
 
 
 class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
+    def _call_function_under_test(nodes, degree, param_vals):
         from bezier import _surface_helpers
 
         return _surface_helpers._evaluate_cartesian_multi(
-            nodes, degree, param_vals, dimension)
+            nodes, degree, param_vals)
 
     def test_basic(self):
         nodes = np.asfortranarray([
@@ -2289,7 +2286,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
             [0.5, 0.25],
             [0.25, 0.375],
         ])
-        result = self._call_function_under_test(nodes, 2, param_vals, 2)
+        result = self._call_function_under_test(nodes, 2, param_vals)
         self.assertEqual(result, expected)
 
     def test_outside_domain(self):
@@ -2309,7 +2306,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
             [-1.0, 3.0],
             [0.75, 0.125]
         ])
-        result = self._call_function_under_test(nodes, 1, param_vals, 2)
+        result = self._call_function_under_test(nodes, 1, param_vals)
         self.assertEqual(result, expected)
 
 
@@ -2317,8 +2314,7 @@ class Test__evaluate_cartesian_multi(utils.NumPyTestCase):
 class Test_speedup_evaluate_cartesian_multi(Test__evaluate_cartesian_multi):
 
     @staticmethod
-    def _call_function_under_test(nodes, degree, param_vals, dimension):
+    def _call_function_under_test(nodes, degree, param_vals):
         from bezier import _speedup
 
-        return _speedup.speedup.evaluate_cartesian_multi(
-            nodes, degree, param_vals, dimension)
+        return _speedup.evaluate_cartesian_multi(nodes, degree, param_vals)
