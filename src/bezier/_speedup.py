@@ -25,7 +25,7 @@ if os.path.exists(SHARED_LIB):
     LIBSPEEDUP = ctypes.cdll.LoadLibrary(SHARED_LIB)
 else:
     LIBSPEEDUP = None
-    MSG = '{!r} is missing'.format(MSG)
+    MSG = '{!r} is missing'.format(SHARED_LIB)
     raise ImportError(MSG)
 
 
