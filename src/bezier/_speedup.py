@@ -12,6 +12,8 @@
 
 """``ctypes`` interface to ``libspeedup`` shared library."""
 
+# pylint: disable=missing-docstring
+
 
 import ctypes
 import os
@@ -340,6 +342,7 @@ def parallel_different(start0, end0, start1, end1):
     return result.value
 
 
+# pylint: disable=too-many-arguments,too-many-locals
 def from_linearized(
         error1, start1, end1, start_node1, end_node1, nodes1,
         error2, start2, end2, start_node2, end_node2, nodes2):
@@ -383,3 +386,4 @@ def from_linearized(
         raise ValueError('outside of unit interval')
 
     return refined_s.value, refined_t.value, does_intersect.value
+# pylint: enable=too-many-arguments,too-many-locals

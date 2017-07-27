@@ -659,7 +659,7 @@ class Surface(_base.Base):
                 self._verify_barycentric(lambda1, lambda2, lambda3)
 
         return _surface_helpers.evaluate_barycentric_multi(
-            self._nodes, self._degree, param_vals, self._dimension)
+            self._nodes, self._degree, param_vals)
 
     @staticmethod
     def _verify_cartesian(s, t):

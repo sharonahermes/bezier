@@ -446,10 +446,6 @@ def get_curvature(nodes, degree, tangent_vec, s):
        from bezier._curve_helpers import evaluate_hodograph
        from bezier._curve_helpers import get_curvature
 
-       def hodograph(nodes, s):
-           degree = nodes.shape[0] - 1
-           return evaluate_hodograph(s, nodes, degree)
-
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
@@ -461,7 +457,7 @@ def get_curvature(nodes, degree, tangent_vec, s):
        ...     [0.0 ,  0.0],
        ... ])
        >>> s = 0.5
-       >>> tangent_vec = hodograph(nodes, s)
+       >>> tangent_vec = evaluate_hodograph(s, nodes)
        >>> tangent_vec
        array([[-1., 0.]])
        >>> curvature = get_curvature(nodes, 4, tangent_vec, s)

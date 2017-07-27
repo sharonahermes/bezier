@@ -1113,13 +1113,11 @@ def classify_intersection(intersection):
        from bezier._surface_helpers import classify_intersection
 
        def hodograph(curve, s):
-           return _curve_helpers.evaluate_hodograph(
-               s, curve._nodes, curve._degree)
+           return _curve_helpers.evaluate_hodograph(s, curve._nodes)
 
        def curvature(curve, s):
            nodes = curve._nodes
-           tangent = _curve_helpers.evaluate_hodograph(
-               s, nodes, curve._degree)
+           tangent = _curve_helpers.evaluate_hodograph(s, nodes)
            return _curve_helpers.get_curvature(
                nodes, curve._degree, tangent, s)
 

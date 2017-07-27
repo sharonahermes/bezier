@@ -421,7 +421,7 @@ class TestSurface(utils.NumPyTestCase):
             result = surface.evaluate_barycentric_multi(param_vals, **kwargs)
             self.assertEqual(result, mock.sentinel.evaluated)
 
-            mocked.assert_called_once_with(nodes, 1, param_vals, 2)
+            mocked.assert_called_once_with(nodes, 1, param_vals)
 
     def test_evaluate_barycentric_multi(self):
         self._eval_bary_multi_helper()

@@ -618,10 +618,6 @@ def _newton_refine(s, nodes1, t, nodes2):
         # No refinement is needed.
         return s, t
 
-    # NOTE: This assumes nodes are (d + 1)x2.
-    degree1 = nodes1.shape[0] - 1
-    degree2 = nodes2.shape[0] - 1
-
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order='F')
     # In curve.evaluate() and evaluate_hodograph() the roles of
