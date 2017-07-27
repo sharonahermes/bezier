@@ -23,8 +23,6 @@ module speedup
        newton_refine_intersect, jacobian_det, bbox_intersect, &
        wiggle_interval, parallel_different, from_linearized
 
-  ! NOTE: This still relies on .f2py_f2cmap being present
-  !       in the directory that build is called from.
   integer, parameter :: dp=kind(0.d0)
 
 contains
@@ -35,8 +33,6 @@ contains
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     integer :: num_nodes
     integer :: dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
@@ -85,9 +81,6 @@ contains
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(lambda1) :: num_vals = size(lambda1)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: degree
     integer :: dimension_
@@ -130,9 +123,6 @@ contains
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
-    !f2py integer intent(hide), depend(nodes) :: degree = size(nodes, 1) - 1
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(s_vals) :: num_vals = size(s_vals)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: degree
     integer :: dimension_
@@ -149,7 +139,6 @@ contains
 
   subroutine linearization_error(nodes, degree, dimension_, error)
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
     integer, intent(in) :: degree
@@ -178,8 +167,6 @@ contains
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     integer :: num_nodes
     integer :: dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
@@ -205,10 +192,6 @@ contains
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
     integer :: num_nodes
     integer :: dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
@@ -265,10 +248,6 @@ contains
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
     !       call it directly. This is to avoid copying param_vals.
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer depend(nodes) :: dimension_ = size(nodes, 2)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
     integer :: num_nodes
     integer :: dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
@@ -365,7 +344,6 @@ contains
 
   subroutine bbox(num_nodes, nodes, left, right, bottom, top)
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
     integer :: num_nodes
     real(dp), intent(in) :: nodes(num_nodes, 2)
     real(dp), intent(out) :: left, right, bottom, top
@@ -386,7 +364,6 @@ contains
 
     ! NOTE: This is a helper for ``specialize_curve`` that works on any degree.
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
     integer, intent(in) :: degree
@@ -430,7 +407,6 @@ contains
   subroutine specialize_curve_quadratic( &
        nodes, dimension_, start, end_, new_nodes)
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(3, dimension_)
     integer :: dimension_
     real(dp), intent(in) :: start, end_
@@ -461,7 +437,6 @@ contains
        nodes, degree, dimension_, start, end_, curve_start, curve_end, &
        new_nodes, true_start, true_end)
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
     integer, intent(in) :: degree
@@ -492,8 +467,6 @@ contains
   subroutine jacobian_both( &
        num_nodes, dimension_, nodes, degree, new_nodes)
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer, depend(nodes) :: dimension_ = size(nodes, 2)
     integer :: num_nodes
     integer :: dimension_
     real(dp), intent(in) :: nodes(num_nodes, dimension_)
@@ -526,7 +499,6 @@ contains
 
   subroutine evaluate_hodograph(s, nodes, dimension_, degree, hodograph)
 
-    !f2py integer intent(hide), depend(nodes) :: dimension_ = size(nodes, 2)
     real(dp), intent(in) :: s
     real(dp), intent(in) :: nodes(degree + 1, dimension_)
     integer :: dimension_
@@ -547,8 +519,6 @@ contains
   subroutine newton_refine_intersect( &
        s, nodes1, degree1, t, nodes2, degree2, new_s, new_t)
 
-    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
-    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
     real(dp), intent(in) :: s
     real(dp), intent(in) :: nodes1(degree1 + 1, 2)
     integer :: degree1
@@ -602,9 +572,6 @@ contains
   subroutine jacobian_det( &
        num_nodes, nodes, degree, num_vals, param_vals, evaluated)
 
-    !f2py integer intent(hide), depend(nodes) :: num_nodes = size(nodes, 1)
-    !f2py integer intent(hide), depend(param_vals) :: num_vals &
-    !f2py     = size(param_vals, 1)
     integer :: num_nodes
     real(dp), intent(in) :: nodes(num_nodes, 2)
     integer :: degree
@@ -636,8 +603,6 @@ contains
 
   subroutine bbox_intersect(num_nodes1, nodes1, num_nodes2, nodes2, enum_)
 
-    !f2py integer intent(hide), depend(nodes1) :: num_nodes1 = size(nodes1, 1)
-    !f2py integer intent(hide), depend(nodes2) :: num_nodes2 = size(nodes2, 1)
     integer :: num_nodes1, num_nodes2
     real(dp), intent(in) :: nodes1(num_nodes1, 2)
     real(dp), intent(in) :: nodes2(num_nodes2, 2)
@@ -739,8 +704,6 @@ contains
        error2, start2, end2, start_node2, end_node2, nodes2, degree2, &
        refined_s, refined_t, does_intersect, py_exc)
 
-    !f2py integer intent(hide), depend(nodes1) :: degree1 = size(nodes1, 1) - 1
-    !f2py integer intent(hide), depend(nodes2) :: degree2 = size(nodes2, 1) - 1
     real(dp), intent(in) :: error1, start1, end1
     real(dp), intent(in) :: start_node1(1, 2)
     real(dp), intent(in) :: end_node1(1, 2)

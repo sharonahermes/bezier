@@ -1,14 +1,11 @@
-all: src/bezier/_speedup.so
+all: src/bezier/libspeedup.so
 
-src/bezier/_speedup.so: src/bezier/_speedup.pyf src/bezier/speedup.f90 .f2py_f2cmap
-	f2py --verbose -c --opt='-O3' \
-	    src/bezier/_speedup.pyf src/bezier/speedup.f90
-	mv _speedup*.so src/bezier
-
-brute-force-pyf: src/bezier/speedup.f90 .f2py_f2cmap
-	f2py src/bezier/speedup.f90 -m _speedup -h src/bezier/_speedup.pyf
+src/bezier/libspeedup.so: src/bezier/speedup.f90
+	gfortran -shared -fPIC \
+	  src/bezier/speedup.f90 \
+	  -o src/bezier/libspeedup.so
 
 clean:
-	rm -f src/bezier/_speedup*.so
+	rm -f src/bezier/libspeedup.so speedup.mod
 
-.PHONY: all clean brute-force-pyf
+.PHONY: all clean
