@@ -16,6 +16,5 @@ __pycache__
 .DS_Store
 
 # Generated files
-speedup.mod
-src/bezier/libspeedup.so
+src/bezier/_speedup/libspeedup.so
 wheelhouse/
