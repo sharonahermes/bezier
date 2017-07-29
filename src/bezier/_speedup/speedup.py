@@ -84,7 +84,7 @@ def linearization_error(nodes):
         ctypes.c_int(degree),
         ctypes.c_int(dimension),
         numpy_pointer(nodes),
-        ctypes.pointer(error),
+        ctypes.byref(error),
     )
     return error.value
 
@@ -147,7 +147,7 @@ def cross_product(vec0, vec1):
     LIBSPEEDUP.cross_product(
         numpy_pointer(vec0),
         numpy_pointer(vec1),
-        ctypes.pointer(result),
+        ctypes.byref(result),
     )
     return result.value
 
@@ -161,9 +161,9 @@ def segment_intersection(start0, end0, start1, end1):
         numpy_pointer(end0),
         numpy_pointer(start1),
         numpy_pointer(end1),
-        ctypes.pointer(s_val),
-        ctypes.pointer(t_val),
-        ctypes.pointer(success),
+        ctypes.byref(s_val),
+        ctypes.byref(t_val),
+        ctypes.byref(success),
     )
     return s_val.value, t_val.value, success.value
 
@@ -179,10 +179,10 @@ def bbox(nodes):
     LIBSPEEDUP.bbox(
         ctypes.c_int(num_nodes),
         numpy_pointer(nodes),
-        ctypes.pointer(left),
-        ctypes.pointer(right),
-        ctypes.pointer(bottom),
-        ctypes.pointer(top),
+        ctypes.byref(left),
+        ctypes.byref(right),
+        ctypes.byref(bottom),
+        ctypes.byref(top),
     )
 
     return left.value, right.value, bottom.value, top.value
@@ -204,8 +204,8 @@ def specialize_curve(nodes, start, end, curve_start, curve_end, degree):
         ctypes.c_double(curve_start),
         ctypes.c_double(curve_end),
         numpy_pointer(new_nodes),
-        ctypes.pointer(true_start),
-        ctypes.pointer(true_end),
+        ctypes.byref(true_start),
+        ctypes.byref(true_end),
     )
 
     return new_nodes, true_start.value, true_end.value
@@ -260,8 +260,8 @@ def newton_refine_intersect(s, nodes1, t, nodes2):
         ctypes.c_double(t),
         ctypes.c_int(degree2),
         numpy_pointer(nodes2),
-        ctypes.pointer(new_s),
-        ctypes.pointer(new_t),
+        ctypes.byref(new_s),
+        ctypes.byref(new_t),
     )
 
     return new_s.value, new_t.value
@@ -301,7 +301,7 @@ def bbox_intersect(nodes1, nodes2):
         numpy_pointer(nodes1),
         ctypes.c_int(num_nodes2),
         numpy_pointer(nodes2),
-        ctypes.pointer(enum_val),
+        ctypes.byref(enum_val),
     )
 
     return enum_val.value
@@ -312,8 +312,8 @@ def wiggle_interval(value):
     success = ctypes.c_bool()
     LIBSPEEDUP.wiggle_interval(
         ctypes.c_double(value),
-        ctypes.pointer(result),
-        ctypes.pointer(success),
+        ctypes.byref(result),
+        ctypes.byref(success),
     )
     return result.value, success.value
 
@@ -325,7 +325,7 @@ def parallel_different(start0, end0, start1, end1):
         numpy_pointer(end0),
         numpy_pointer(start1),
         numpy_pointer(end1),
-        ctypes.pointer(result),
+        ctypes.byref(result),
     )
     return result.value
 
@@ -362,10 +362,10 @@ def from_linearized(
         numpy_pointer(end_node2),
         ctypes.c_int(degree2),
         numpy_pointer(nodes2),
-        ctypes.pointer(refined_s),
-        ctypes.pointer(refined_t),
-        ctypes.pointer(does_intersect),
-        ctypes.pointer(py_exc),
+        ctypes.byref(refined_s),
+        ctypes.byref(refined_t),
+        ctypes.byref(does_intersect),
+        ctypes.byref(py_exc),
     )
 
     if py_exc.value == 1:
