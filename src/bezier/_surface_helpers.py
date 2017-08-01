@@ -32,6 +32,7 @@ from bezier import _intersection_helpers
 from bezier import curved_polygon
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 

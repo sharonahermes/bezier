@@ -27,6 +27,7 @@ from bezier.curved_polygon import CurvedPolygon
 from bezier.surface import Surface
 try:
     import bezier._speedup  # noqa: F401
+    import bezier._speedup.speedup  # noqa: F401
     _HAS_SPEEDUP = True
 except ImportError:  # pragma: NO COVER
     _HAS_SPEEDUP = False

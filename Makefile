@@ -1,14 +1,16 @@
-all: src/bezier/_speedup.so
+all: src/bezier/_speedup/speedup.so
 
-src/bezier/_speedup.so: src/bezier/_speedup.pyf src/bezier/speedup.f90 .f2py_f2cmap
-	f2py --verbose -c --opt='-O3' \
-	    src/bezier/_speedup.pyf src/bezier/speedup.f90
-	mv _speedup*.so src/bezier
+src/bezier/_speedup/speedup.so: src/bezier/_speedup/speedup.o src/bezier/_speedup/speedup.pyx
+	python make_cython_so.py build_ext --inplace
+	mv speedup.so src/bezier/_speedup/
+	rm -fr build/ src/bezier/_speedup/speedup.c \
+	  src/bezier/_speedup/speedup.mod src/bezier/_speedup/speedup.o
 
-brute-force-pyf: src/bezier/speedup.f90 .f2py_f2cmap
-	f2py src/bezier/speedup.f90 -m _speedup -h src/bezier/_speedup.pyf
+src/bezier/_speedup/speedup.o: src/bezier/_speedup/speedup.f90
+	gfortran -shared -fPIC -c src/bezier/_speedup/speedup.f90
+	mv speedup.o speedup.mod src/bezier/_speedup/
 
 clean:
-	rm -f src/bezier/_speedup*.so
+	rm -f src/bezier/_speedup/speedup.so
 
-.PHONY: all clean brute-force-pyf
+.PHONY: all clean

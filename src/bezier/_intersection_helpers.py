@@ -27,6 +27,7 @@ from bezier import _curve_helpers
 from bezier import _helpers
 try:
     from bezier import _speedup
+    import bezier._speedup.speedup  # noqa: F401
 except ImportError:  # pragma: NO COVER
     _speedup = None
 
